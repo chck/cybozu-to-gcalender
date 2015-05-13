@@ -9,10 +9,10 @@ require "yaml"
 
 class LoadCybozu
   def initialize
-    conf       = YAML::load(open("../API.yaml"))
-    @USERNAME  =conf["username"]
-    @PASSWORD  =conf["password"]
-    @INBOXNAME =conf["inboxname"]
+    conf       = YAML::load_file("API.yaml")
+    @USERNAME  =conf["gmail"]["username"]
+    @PASSWORD  =conf["gmail"]["password"]
+    @INBOXNAME =conf["gmail"]["inboxname"]
     @date_plan = []
   end
 
@@ -31,7 +31,7 @@ class LoadCybozu
           #row =~ /(\d\d\d\d)年(\d\d)月(\d\d)日/
           #date="#{$1}-#{$2}-#{$3}"
           date = row.gsub(/日時　　：|
-|\n| |（[月火水木金土日]）/, "").gsub(/[年月]/, "-").gsub(/日/, " ")
+                          |\n| |（[月火水木金土日]）/, "").gsub(/[年月]/, "-").gsub(/日/, " ")
         elsif count==2
           plan = row.gsub(/予定　　：|\r\n/, "")[0, 20]
         else

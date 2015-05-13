@@ -13,14 +13,14 @@ require 'yaml'
 
 class RegisterCalendar
   def initialize
-    conf         = YAML::load(open("../API.yaml"))
+    conf         = YAML::load_file("API.yaml")
     @client      = Google::APIClient.new(:application_name => "Test", :application_versiton => "0.0.1")
     file_storage = Google::APIClient::FileStorage.new("#{$0}-oauth2.json")
 
     if file_storage.authorization.nil?
       flow                  = Google::APIClient::InstalledAppFlow.new(
-        :@client_id     => conf["client_id"],
-        :@client_secret => conf["client_secret"],
+        :@client_id     => conf["googleAPI"]["client_id"],
+        :@client_secret => conf["googleAPI"]["client_secret"],
         :scope          => ["https://www.googleapis.com/auth/calendar"]
       )
       @client.authorization = flow.authorize(file_storage)
