@@ -10,19 +10,19 @@ require "yaml"
 class LoadCybozu
   def initialize
     conf       = YAML::load_file("API.yaml")
-    @USERNAME  =conf["gmail"]["username"]
-    @PASSWORD  =conf["gmail"]["password"]
-    @INBOXNAME =conf["gmail"]["inboxname"]
+    @USERNAME  = conf["gmail"]["username"]
+    @PASSWORD  = conf["gmail"]["password"]
+    @INBOXNAME = conf["gmail"]["inboxname"]
     @date_plan = []
   end
 
   def main
     #7日前のGmailから現在までを反映
-    weekAgo = DateTime.now - 7
-    gmail   = Gmail.new(@USERNAME, @PASSWORD)
-    mails   = gmail.mailbox(@INBOXNAME).emails(:all, :after => weekAgo).map do |mail|
-      p mailDate = mail.date.strftime("%y%m%d-%X")
-      p mailSubject = $1 if mail.subject =~ /\[(登録|削除|変更)\]/
+    week_ago = DateTime.now - 7
+    gmail    = Gmail.new(@USERNAME, @PASSWORD)
+    mails    = gmail.mailbox(@INBOXNAME).emails(:all, :after => week_ago).map do |mail|
+      p mail_date = mail.date.strftime("%y%m%d-%X")
+      p mail_subject = $1 if mail.subject =~ /\[(登録|削除|変更)\]/
       count = 1
       date  = ""
       plan  = ""
@@ -35,7 +35,7 @@ class LoadCybozu
         elsif count==2
           plan = row.gsub(/予定　　：|\r\n/, "")[0, 20]
         else
-          @date_plan << "#{mailDate},#{mailSubject},#{date},#{plan}"
+          @date_plan << "#{mail_date},#{mail_subject},#{date},#{plan}"
           break
         end
         count+=1

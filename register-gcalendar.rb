@@ -42,27 +42,27 @@ class RegisterCalendar
     system("echo cant find calendar!!!") if @gcal_id.nil?
   end
 
-  def setGoogleCalendar(methodDateSummary)
-    ope              = methodDateSummary[0]
+  def set_gcalendar(method_date_summary)
+    ope              = method_date_summary[0]
     event            = {}
-    event["summary"] = methodDateSummary[2]
+    event["summary"] = method_date_summary[2]
     #時間指定イベント
-    if methodDateSummary[1].include?(":")
-      dateArray      = methodDateSummary[1].split("〜")
+    if method_date_summary[1].include?(":")
+      date_a         = method_date_summary[1].split("〜")
       #DateTime型に変換
-      startTime      = DateTime.parse(dateArray[0])-Rational(9, 24) #時差を考慮
-      endTime        = DateTime.parse(dateArray[1])-Rational(9, 24) #時差を考慮
+      start_time     = DateTime.parse(date_a[0]) - Rational(9, 24) #時差を考慮
+      end_time       = DateTime.parse(date_a[1]) - Rational(9, 24) #時差を考慮
       #時間指定の日付をイベントハッシュに登録
-      event["start"] = { "dateTime" => startTime }
-      event["end"]   = { "dateTime" => endTime }
+      event["start"] = { "date_time" => start_time }
+      event["end"]   = { "date_time" => end_time }
       #終日イベント
     else
-      dateArray      = methodDateSummary[1].gsub(/ /, "").split("〜")
+      date_a         = method_date_summary[1].gsub(/ /, "").split("〜")
       #日付をイベントハッシュに登録
-      startDate      = dateArray[0]
-      endDate        = dateArray[1]
-      event["start"] = { "date" => startDate }
-      event["end"]   = { "date" => endDate }
+      start_date     = date_a[0]
+      end_date       = date_a[1]
+      event["start"] = { "date" => start_date }
+      event["end"]   = { "date" => end_date }
     end
 
     @client.execute(:api_method => @service.events.insert, :parameters => { 'calendarId' => @gcal_id }, :body => JSON.dump(event), :headers => { 'Content-Type' => 'application/json' })
@@ -70,14 +70,14 @@ class RegisterCalendar
   end
 
   def main
-    #		array1=["2014-08-15 〜2014-08-15 ","終日らんち！！"]
-    #		array2=["2014-08-15 20:30〜2014-08-15 23:55","時間指定らんち！！"]
-    #		setGoogleCalendar(array2)
-    count=0
+    #		array1 = ["2014-08-15 〜2014-08-15 ","終日らんち！！"]
+    #		array2 = ["2014-08-15 20:30〜2014-08-15 23:55","時間指定らんち！！"]
+    #		set_gcalendar(array2)
+    count = 0
     CSV.open("./plan.txt", "r").each do |row|
       row.delete_at(0)
       puts "#{count+=1}\t#{row}"
-      setGoogleCalendar(row)
+      set_gcalendar(row)
     end
     puts "Done!!"
   end
